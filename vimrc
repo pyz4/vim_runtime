@@ -10,18 +10,20 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'vim-scripts/taglist.vim'
-Plugin 'tpope/vim-fugitive'
+" Plugin 'vim-airline/vim-airline'
+Plugin 'dense-analysis/ale'
+Plugin 'grep.vim'
+Plugin 'itchyny/lightline.vim'
+Plugin 'kien/ctrlp.vim'
 Plugin 'majutsushi/tagbar'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'psf/black'
 Plugin 'scrooloose/nerdtree'
 Plugin 'severin-lemaignan/vim-minimap'
-Plugin 'vim-airline/vim-airline'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-scripts/taglist.vim'
 Plugin 'vitalk/vim-simple-todo'
-Plugin 'yuttie/comfortable-motion.vim'
-" Plugin 'tmhedberg/simpylfold'
-" Plugin 'ycm-core/YouCompleteMe' 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -33,8 +35,11 @@ set incsearch
 set number relativenumber
 set showcmd
 set cursorline
-set ts=4
-set wildmode=longest,list,full
+hi CursorLine term=bold cterm=bold guibg=Grey40
+set bs=2
+set tabstop=4
+set shiftwidth=4
+set softtabstop=0 noexpandtab
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
@@ -45,6 +50,7 @@ let g:ctrlp_working_path_mode = 0
 let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 
 " NERDTree
+nnoremap <Leader>t :NERDTreeToggle<Enter>
 let NERDTreeQuitOnOpen = 1
 
 " vim-indent-guides
@@ -57,6 +63,8 @@ nnoremap <Down> 20j
 nnoremap <Up> 20k
 nnoremap <Right> $
 nnoremap <Left> ^
+nnoremap o o<Esc>
+nnoremap O O<Esc>
 nnoremap f<Tab> :b#<CR>
 nnoremap fw :bd<CR>
 map <Leader>f :TagbarToggle<CR>
@@ -71,9 +79,10 @@ nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
-" comfortable scrolling
-let g:comfortable_motion_scroll_down_key = 'j' 
-let g:comfortable_motion_scroll_up_key = 'k'
+" indentation
+set breakindent
+set breakindentopt=shift:2,min:40,sbr
+set showbreak=...
 
 " yank to clipboard
 if has("clipboard")

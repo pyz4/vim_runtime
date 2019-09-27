@@ -10,6 +10,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 " Plugin 'vim-airline/vim-airline'
+Plugin 'ap/vim-buftabline'
 Plugin 'dense-analysis/ale'
 Plugin 'grep.vim'
 Plugin 'itchyny/lightline.vim'
@@ -38,11 +39,12 @@ filetype indent on
 
 set autoread
 
-
+set hidden
 set tags=tags
 set showmatch
 set hlsearch
 set incsearch
+set smartcase
 set number relativenumber
 set showcmd
 set cursorline
@@ -70,14 +72,23 @@ let NERDTreeQuitOnOpen = 1
 " remappings
 inoremap qq <Esc>
 inoremap QQ <Esc>
+inoremap qw <Esc>:w<CR>
 nnoremap <Down> 20j
 nnoremap <Up> 20k
-nnoremap <Right> $
-nnoremap <Left> ^
+" nnoremap <Right> $
+" nnoremap <Left> ^
+"
+" word manipulation
 nnoremap o o<Esc>
 nnoremap O O<Esc>
-nnoremap f<Tab> :b#<CR>
-nnoremap fw :bd<CR>
+nnoremap dw diw
+
+" buffers
+nnoremap bdd :bd!<CR>
+
+" navigation
+nnoremap <Left> :bprev<CR>
+nnoremap <Right> :bnext<CR>
 map <Leader>f :TagbarToggle<CR>
 map j gj
 map k gk
@@ -87,6 +98,7 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+nnoremap <C-W> :bd<CR>
 set splitbelow
 set splitright
 
@@ -107,6 +119,48 @@ endif
 " Commenting
 nnoremap <C-/> gcc
 vnoremap <C-/> gc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Executing Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline) 
+	let isfirst = 1
+	let words = []
+	let expanded_cmdline = a:cmdline
+	" for word in split(a:cmdline)
+
+	"   if isfirst
+	"     let isfirst = 0  " don't change first word (shell command)
+	"   else
+	"     if word[0] =~ '\v[%#<]'
+	"       let word = expand(word)
+	"     endif
+	"     let word = shellescape(word, 1)
+	"   endif
+	"   call add(words, word)
+	" endfor
+	" let expanded_cmdline = join(words)
+	botright vnew
+	setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+	call setline(1, 'You entered:  ' . a:cmdline)
+	call setline(2, 'Expanded to:  ' . expanded_cmdline)
+	call append(line('$'), substitute(getline(2), '.', '=', 'g'))
+	silent execute '$read !'. expanded_cmdline
+	1
+endfunction
+
+command! -range Rshell '<,'>call s:RunShellCommandRange()
+function! s:RunShellCommandRange() range
+	let l:cmd = getline(a:firstline)
+	for line_number in range(a:firstline+1, a:lastline)
+		let l:cmd = join([l:cmd, getline(line_number)], " ")
+	endfor
+	call s:RunShellCommand(l:cmd)
+endfunction
+
+vnoremap `` :'<,'>Rshell<CR>
+nnoremap `` :.Rshell<CR>
 
 """"""""""""""""""""""""""""""
 " => Status line

@@ -1,36 +1,42 @@
 syntax enable
-colorscheme zenburn
+
+" python support
+let g:python3_host_prog = '/usr/local/bin/python3'
 
 " VUNDLE
-set nocompatible              " be iMproved, required
-filetype off                  " required
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" set nocompatible              " be iMproved, required
+" filetype off                  " required
+" set rtp+=~/.vim/bundle/Vundle.vim
+call plug#begin('~/.config/nvim/plugged')
 
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+" Plugin 'VundleVim/Vundle.vim'
 " Plugin 'vim-airline/vim-airline'
-Plugin 'ap/vim-buftabline'
-Plugin 'dense-analysis/ale'
-Plugin 'grep.vim'
-Plugin 'itchyny/lightline.vim'
-Plugin 'kien/ctrlp.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'psf/black'
-Plugin 'scrooloose/nerdtree'
-Plugin 'severin-lemaignan/vim-minimap'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
-Plugin 'vim-scripts/taglist.vim'
-Plugin 'vitalk/vim-simple-todo'
+" Plug 'grep.vim'
+Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
+Plug 'ap/vim-buftabline'
+Plug 'dense-analysis/ale'
+Plug 'itchyny/lightline.vim'
+Plug 'jnurmine/Zenburn'
+Plug 'kien/ctrlp.vim'
+Plug 'majutsushi/tagbar'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'psf/black'
+Plug 'scrooloose/nerdtree'
+Plug 'severin-lemaignan/vim-minimap'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-scripts/taglist.vim'
+Plug 'vitalk/vim-simple-todo'
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
 filetype plugin indent on    " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+colorscheme zenburn
+
 " Set how many lines vim remembers
 set history=500
 
@@ -44,14 +50,16 @@ set tags=tags
 set showmatch
 set hlsearch
 set incsearch
+set ignorecase
 set smartcase
 set number relativenumber
 set showcmd
 set cursorline
-hi CursorLine term=bold cterm=bold guibg=Grey40
+hi CursorLine term=bold cterm=bold guibg=#ffbf00
 set bs=2
 set tabstop=4
 set shiftwidth=4
+set shiftround
 set softtabstop=0 noexpandtab
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -63,28 +71,31 @@ let g:ctrlp_working_path_mode = 0
 let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 
 " NERDTree
-nnoremap <Leader>t :NERDTreeToggle<Enter>
+nnoremap <Leader>t :NERDTreeToggle<CR>
+nnoremap <Leader>r :NERDTreeFind<CR>
 let NERDTreeQuitOnOpen = 1
 
 " vim-indent-guides
 " let g:indent_guides_enable_on_vim_startup = 1
 
 " remappings
+inoremap qw <Esc>:w<CR>
 inoremap qq <Esc>
 inoremap QQ <Esc>
-inoremap qw <Esc>:w<CR>
-nnoremap <Down> 20j
-nnoremap <Up> 20k
+nnoremap <Down> <C-d>M
+nnoremap <Up> <C-u>M
+nnoremap <S-s> :w<CR>
 " nnoremap <Right> $
 " nnoremap <Left> ^
-"
+
 " word manipulation
 nnoremap o o<Esc>
 nnoremap O O<Esc>
-nnoremap dw diw
 
 " buffers
 nnoremap bdd :bd!<CR>
+" nnoremap bdd :bp<cr>:bd #<cr>
+" nnoremap <C-W> :bd<CR>
 
 " navigation
 nnoremap <Left> :bprev<CR>
@@ -92,13 +103,15 @@ nnoremap <Right> :bnext<CR>
 map <Leader>f :TagbarToggle<CR>
 map j gj
 map k gk
+nnoremap J jz.
+nnoremap K kz.
+nnoremap <space> z.
 
 " pane navigation
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-nnoremap <C-W> :bd<CR>
 set splitbelow
 set splitright
 
@@ -116,9 +129,16 @@ if has("clipboard")
   endif
 endif
 
-" Commenting
-nnoremap <C-/> gcc
-vnoremap <C-/> gc
+" search
+set grepprg=ag\ --vimgrep\ $*
+set grepformat=%f:%l:%c:%m
+nnoremap <C-_> :vimgrep /
+autocmd QuickFixCmdPost *grep* cwindow 
+"" remap so it's easy to use with one hand
+nnoremap m Nz.
+nnoremap N :cn<CR>z.
+nnoremap M :cp<CR>z.
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Executing Commands
@@ -141,7 +161,7 @@ function! s:RunShellCommand(cmdline)
 	"   call add(words, word)
 	" endfor
 	" let expanded_cmdline = join(words)
-	botright vnew
+	botright new
 	setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
 	call setline(1, 'You entered:  ' . a:cmdline)
 	call setline(2, 'Expanded to:  ' . expanded_cmdline)
@@ -150,7 +170,7 @@ function! s:RunShellCommand(cmdline)
 	1
 endfunction
 
-command! -range Rshell '<,'>call s:RunShellCommandRange()
+command! -range Rshell <line1>,<line2>call s:RunShellCommandRange()
 function! s:RunShellCommandRange() range
 	let l:cmd = getline(a:firstline)
 	for line_number in range(a:firstline+1, a:lastline)
@@ -159,8 +179,8 @@ function! s:RunShellCommandRange() range
 	call s:RunShellCommand(l:cmd)
 endfunction
 
-vnoremap `` :'<,'>Rshell<CR>
 nnoremap `` :.Rshell<CR>
+vnoremap `` :'<,'>Rshell<CR>
 
 """"""""""""""""""""""""""""""
 " => Status line
@@ -174,7 +194,7 @@ let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head'

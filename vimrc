@@ -1,7 +1,8 @@
 syntax enable
 
 " python support
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python2_host_prog = system('which python2.7')
+let g:python3_host_prog = system('which python3')
 
 " using vim-plug 
 call plug#begin('~/.config/nvim/plugged')

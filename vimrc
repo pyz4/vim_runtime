@@ -3,17 +3,15 @@ syntax enable
 " python support
 let g:python3_host_prog = '/usr/local/bin/python3'
 
-" VUNDLE
-" set nocompatible              " be iMproved, required
-" filetype off                  " required
-" set rtp+=~/.vim/bundle/Vundle.vim
+" using vim-plug 
 call plug#begin('~/.config/nvim/plugged')
 
-" let Vundle manage Vundle, required
 " Plugin 'VundleVim/Vundle.vim'
 " Plugin 'vim-airline/vim-airline'
 " Plug 'grep.vim'
 Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
+Plug 'Shougo/echodoc.vim'
+Plug 'deoplete-plugins/deoplete-jedi'
 Plug 'ap/vim-buftabline'
 Plug 'dense-analysis/ale'
 Plug 'itchyny/lightline.vim'
@@ -24,10 +22,12 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'psf/black'
 Plug 'scrooloose/nerdtree'
 Plug 'severin-lemaignan/vim-minimap'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/taglist.vim'
 Plug 'vitalk/vim-simple-todo'
+Plug 'icymind/NeoSolarized'
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on    " required
@@ -35,10 +35,14 @@ filetype plugin indent on    " required
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-colorscheme zenburn
+" color schemes
+colorscheme NeoSolarized
+let g:neosolarized_contrast = 'high'
+set termguicolors
+set background=light
 
 " Set how many lines vim remembers
-set history=500
+set history=1000
 
 filetype plugin on
 filetype indent on
@@ -94,6 +98,7 @@ nnoremap O O<Esc>
 
 " buffers
 nnoremap bdd :bd!<CR>
+nnoremap <C-W> :bd<CR>
 " nnoremap bdd :bp<cr>:bd #<cr>
 " nnoremap <C-W> :bd<CR>
 
@@ -132,13 +137,22 @@ endif
 " search
 set grepprg=ag\ --vimgrep\ $*
 set grepformat=%f:%l:%c:%m
-nnoremap <C-_> :vimgrep /
+nnoremap <C-_> :TagbarClose<CR>:vimgrep /
 autocmd QuickFixCmdPost *grep* cwindow 
 "" remap so it's easy to use with one hand
 nnoremap m Nz.
 nnoremap N :cn<CR>z.
 nnoremap M :cp<CR>z.
 
+" deoplete
+let g:deoplete#enable_at_startup = 1
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+
+" echodoc
+set cmdheight=2
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'echo'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Executing Commands
@@ -191,7 +205,7 @@ set laststatus=2
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'solarized',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]

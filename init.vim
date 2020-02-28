@@ -2,7 +2,7 @@ syntax enable
 
 " python support
 let g:python2_host_prog = system('which python2.7')
-let g:python3_host_prog = 'C:\Users\pyz\AppData\Local\Microsoft\WindowsApps\python3.EXE'
+let g:python3_host_prog = "C:/Users/pyz/.virtualenvs/nvim/Scripts/python.exe"
 
 " using vim-plug 
 call plug#begin('~/.config/nvim/plugged')
@@ -12,9 +12,11 @@ call plug#begin('~/.config/nvim/plugged')
 " Plug 'grep.vim'
 Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'Shougo/echodoc.vim'
-Plug 'deoplete-plugins/deoplete-jedi'
 Plug 'ap/vim-buftabline'
 Plug 'dense-analysis/ale'
+Plug 'deoplete-plugins/deoplete-jedi'
+Plug 'easymotion/vim-easymotion'
+Plug 'icymind/NeoSolarized'
 Plug 'itchyny/lightline.vim'
 Plug 'jnurmine/Zenburn'
 Plug 'kien/ctrlp.vim'
@@ -23,12 +25,12 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'psf/black'
 Plug 'scrooloose/nerdtree'
 Plug 'severin-lemaignan/vim-minimap'
-Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'aserebryakov/vim-todo-lists'
 Plug 'vim-scripts/taglist.vim'
 Plug 'vitalk/vim-simple-todo'
-Plug 'icymind/NeoSolarized'
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on    " required
@@ -37,8 +39,8 @@ filetype plugin indent on    " required
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " color schemes
-colorscheme NeoSolarized 
-let g:neosolarized_contrast = 'normal'
+colorscheme NeoSolarized
+let g:neosolarized_contrast = 'high'
 set termguicolors
 set background=light
 
@@ -60,7 +62,7 @@ set smartcase
 set number relativenumber
 set showcmd
 set cursorline
-hi CursorLine term=bold cterm=bold guibg=LightGray
+hi CursorLine term=bold cterm=bold guibg=#ffbf00
 set bs=2
 set tabstop=4
 set shiftwidth=4
@@ -73,7 +75,8 @@ set runtimepath^=~/.vim/bundle/ctrlp.vim
 let g:ctrlp_match_window = 'bottom,order:ttb'
 let g:ctrlp_switch_buffer = 0
 let g:ctrlp_working_path_mode = 0
-let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+let g:ctrlp_map = ";"
+" let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 
 " NERDTree
 nnoremap <Leader>t :NERDTreeToggle<CR>
@@ -104,20 +107,22 @@ nnoremap <C-W> :bd<CR>
 " nnoremap <C-W> :bd<CR>
 
 " navigation
-nnoremap <Left> :bprev<CR>
-nnoremap <Right> :bnext<CR>
+nnoremap { :bprev<CR>
+nnoremap } :bnext<CR>
 map <Leader>f :TagbarToggle<CR>
 map j gj
 map k gk
 nnoremap J jz.
 nnoremap K kz.
 nnoremap <space> z.
+nnoremap <C-j> 20jz.
+nnoremap <C-k> 20kz.
 
 " pane navigation
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <Down> <C-W><C-J>
+nnoremap <Up> <C-W><C-K>
+nnoremap <Right> <C-W><C-L>
+nnoremap <Left> <C-W><C-H>
 set splitbelow
 set splitright
 
@@ -128,11 +133,11 @@ set showbreak=...
 
 " yank to clipboard
 if has("clipboard")
-  set clipboard=unnamed " copy to the system clipboard
+set clipboard=unnamed " copy to the system clipboard
 
-  if has("unnamedplus") " X11 support
-    set clipboard+=unnamedplus
-  endif
+if has("unnamedplus") " X11 support
+	set clipboard+=unnamedplus
+endif
 endif
 
 " search
@@ -154,6 +159,11 @@ inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 set cmdheight=2
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'echo'
+
+" vim todo list
+let g:VimTodoListsMoveItems = 0
+let g:VimTodoListsDatesEnabled = 1
+let g:VimTodoListsDatesFormat = "%a %b, %Y"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Executing Commands
@@ -206,65 +216,65 @@ set laststatus=2
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
+	\ 'colorscheme': 'solarized',
+	\ 'active': {
+	\   'left': [ [ 'mode', 'paste' ],
+	\             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
+	\ },
+	\ 'component_function': {
+	\   'gitbranch': 'fugitive#head'
+	\ },
+	\ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Returns true if paste mode is enabled
 function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    endif
-    return ''
+	if &paste
+		return 'PASTE MODE  '
+	endif
+	return ''
 endfunction
 
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
-    let l:currentBufNum = bufnr("%")
-    let l:alternateBufNum = bufnr("#")
+	let l:currentBufNum = bufnr("%")
+	let l:alternateBufNum = bufnr("#")
 
-    if buflisted(l:alternateBufNum)
-        buffer #
-    else
-        bnext
-    endif
+	if buflisted(l:alternateBufNum)
+		buffer #
+	else
+		bnext
+	endif
 
-    if bufnr("%") == l:currentBufNum
-        new
-    endif
+	if bufnr("%") == l:currentBufNum
+		new
+	endif
 
-    if buflisted(l:currentBufNum)
-        execute("bdelete! ".l:currentBufNum)
-    endif
+	if buflisted(l:currentBufNum)
+		execute("bdelete! ".l:currentBufNum)
+	endif
 endfunction
 
 function! CmdLine(str)
-    call feedkeys(":" . a:str)
+	call feedkeys(":" . a:str)
 endfunction
 
 function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
+	let l:saved_reg = @"
+	execute "normal! vgvy"
 
-    let l:pattern = escape(@", "\\/.*'$^~[]")
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
+	let l:pattern = escape(@", "\\/.*'$^~[]")
+	let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-    if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    endif
+	if a:direction == 'gv'
+		call CmdLine("Ack '" . l:pattern . "' " )
+	elseif a:direction == 'replace'
+		call CmdLine("%s" . '/'. l:pattern . '/')
+	endif
 
-    let @/ = l:pattern
-    let @" = l:saved_reg
+	let @/ = l:pattern
+	let @" = l:saved_reg
 endfunction
